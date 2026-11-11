@@ -11,3 +11,7 @@ createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </StrictMode>,
 )
+
+// Tell the inline boot guard in index.html that the app mounted successfully,
+// so it never shows the "couldn't finish loading" fallback.
+window.__APP_BOOTED__ = true

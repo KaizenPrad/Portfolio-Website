@@ -6,37 +6,28 @@
     <meta name="theme-color" content="#1C100D" />
 
     <title>Pradyumn Dwivedi — Full-Stack Developer</title>
-    <meta
-      name="description"
-      content="Pradyumn Dwivedi is a full-stack developer from Kanpur, India, building modern web applications, e-commerce platforms and real-time security systems with React, Node.js and PostgreSQL."
-    />
+    <meta name="description" content="Pradyumn Dwivedi is a full-stack developer from Kanpur, India, building production-ready web applications with the MERN and PERN stacks using React.js, Node.js, Express.js, MongoDB and PostgreSQL." />
     <meta name="author" content="Pradyumn Dwivedi" />
     <meta
       name="keywords"
-      content="Pradyumn Dwivedi, Full-Stack Developer, React Developer, Node.js Developer, Freelance Web Developer, Kanpur, India"
+      content="Pradyumn Dwivedi, Full-Stack Developer, React Developer, Node.js Developer, MERN Stack, PERN Stack, Freelance Web Developer, Kanpur, India"
     />
-    <link rel="canonical" href="https://pradyumndwivedi.dev/" />
+    <link rel="canonical" href="https://portfolio-website-vd98.onrender.com/" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Pradyumn Dwivedi — Full-Stack Developer" />
-    <meta
-      property="og:description"
-      content="Turning ideas into powerful digital experiences. Full-stack development, e-commerce and real-time applications."
-    />
-    <meta property="og:url" content="https://pradyumndwivedi.dev/" />
-    <meta property="og:image" content="/images/og-image.png" />
+    <meta property="og:description" content="Pradyumn Dwivedi is a full-stack developer from Kanpur, India, building production-ready web applications with the MERN and PERN stacks using React.js, Node.js, Express.js, MongoDB and PostgreSQL." />
+    <meta property="og:url" content="https://portfolio-website-vd98.onrender.com/" />
+    <meta property="og:image" content="https://portfolio-website-vd98.onrender.com/images/og-image.png" />
     <meta property="og:image:alt" content="Pradyumn Dwivedi — Full-Stack Developer" />
     <meta property="og:site_name" content="Pradyumn Dwivedi" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Pradyumn Dwivedi — Full-Stack Developer" />
-    <meta
-      name="twitter:description"
-      content="Turning ideas into powerful digital experiences. Full-stack development, e-commerce and real-time applications."
-    />
-    <meta name="twitter:image" content="/images/og-image.png" />
+    <meta name="twitter:description" content="Pradyumn Dwivedi is a full-stack developer from Kanpur, India, building production-ready web applications with the MERN and PERN stacks using React.js, Node.js, Express.js, MongoDB and PostgreSQL." />
+    <meta name="twitter:image" content="https://portfolio-website-vd98.onrender.com/images/og-image.png" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
@@ -68,6 +59,78 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <!--
+      Safety net: if the JS bundle 404s (e.g. a stale cached index.html points
+      at hashed filenames that no longer exist) the page would otherwise be a
+      blank brown screen. This shows a recovery message instead.
+      Self-contained inline styles so it works even when the CSS is missing.
+    -->
+    <div
+      id="boot-fallback"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: #1c100d;
+        font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+        color: #ffffff;
+        text-align: center;
+      "
+    >
+      <div style="max-width: 420px">
+        <p
+          style="
+            margin: 0 0 10px;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #ff6a00;
+          "
+        >
+          Connection problem
+        </p>
+        <h1 style="margin: 0 0 14px; font-size: 26px; font-weight: 600; line-height: 1.15">
+          This page didn&rsquo;t finish loading
+        </h1>
+        <p style="margin: 0 0 24px; font-size: 14px; line-height: 1.7; color: #b8aaa4">
+          The site&rsquo;s assets may have been cached from an older deploy. A hard reload
+          usually fixes it.
+        </p>
+        <button
+          onclick="window.location.reload(true)"
+          style="
+            display: inline-block;
+            padding: 12px 26px;
+            border: 0;
+            border-radius: 999px;
+            background: #ff6a00;
+            color: #0b0b0b;
+            font: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+          "
+        >
+          Reload the page
+        </button>
+      </div>
+    </div>
+
+    <script>
+      window.__APP_BOOTED__ = false
+      setTimeout(function () {
+        if (window.__APP_BOOTED__) return
+        var el = document.getElementById('boot-fallback')
+        if (el) el.style.display = 'flex'
+      }, 6000)
+    </script>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

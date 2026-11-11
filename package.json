@@ -8,8 +8,8 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "node scripts/generate-sitemap.mjs && vite build",
+    "dev": "node scripts/generate-sitemap.mjs && node scripts/generate-head.mjs && vite",
+    "build": "node scripts/generate-sitemap.mjs && node scripts/generate-head.mjs && vite build",
     "preview": "vite preview --port 4173",
     "lint": "oxlint",
     "assets:projects": "node scripts/prepare-project-images.mjs",

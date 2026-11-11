@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://pradyumndwivedi.dev/sitemap.xml
+Sitemap: https://portfolio-website-vd98.onrender.com/sitemap.xml

@@ -5,6 +5,11 @@
 #   Build Command ..... npm ci --include=dev && npm run build
 #   Publish Path ...... ./dist
 #
+# IMPORTANT: a Blueprint is only applied when you sync it. If you created the
+# site from the dashboard, apply the `routes` and `headers` blocks below in
+#   Dashboard -> your site -> Settings -> Redirects and Rewrites / Headers
+# or run:  render blueprint launch
+#
 # Deploy with:  render blueprint launch   (or connect the repo in the dashboard)
 
 services:
@@ -23,8 +28,39 @@ services:
       # Leave unset and the contact form hands the message to WhatsApp/Gmail.
       # - key: VITE_CONTACT_ENDPOINT
       #   sync: false
+
+    # ---- SPA routing -------------------------------------------------
+    # Without this, /projects/solex returns 404 on a hard refresh or a
+    # shared link. Render only applies a rule when no file exists at the
+    # requested path, so real assets are never shadowed.
     routes:
-      # SPA fallback — every unknown path is served by the client router.
       - type: rewrite
         source: /*
         destination: /index.html
+
+    # ---- caching ------------------------------------------------------
+    # The HTML must never be cached by the CDN, otherwise a stale copy can
+    # point at hashed asset names that no longer exist (blank page).
+    # Hashed assets are safe to cache forever.
+    headers:
+      - path: /
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /images/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /fonts/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin

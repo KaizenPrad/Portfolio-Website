@@ -59,7 +59,8 @@ src/
   utils/images.js    Responsive srcset helpers
   App.jsx, main.jsx, index.css
 scripts/             Asset pipeline + QA helpers (see below)
-render.yaml          Render Blueprint (Static Site) — build command + env vars
+index.template.html  <head> template — index.html is generated from it
+render.yaml          Render Blueprint (Static Site) — build command, routes, headers
 public/
   images/            Portrait cut-out, project screenshots (webp), OG image, noise tile
   fonts/             Self-hosted woff2 variable fonts
@@ -187,7 +188,7 @@ under Lighthouse's simulated slow-4G profile.
 
 ### Render (Static Site)
 
-Create a **Static Site** on Render and point it at this repo:
+Create a **Static Site** on Render → connect the repo:
 
 | Setting            | Value                                |
 | ------------------ | ------------------------------------ |
@@ -195,7 +196,7 @@ Create a **Static Site** on Render and point it at this repo:
 | Publish Path       | `./dist`                             |
 | Environment        | `NODE_VERSION` = `22.14.0` (see below) |
 
-Or use the included Blueprint — `render.yaml` already encodes all of the above:
+Or use the included Blueprint — `render.yaml` encodes all of the above:
 
 ```bash
 render blueprint launch      # then pick this repo
@@ -206,13 +207,50 @@ render blueprint launch      # then pick this repo
 - `npm ci --include=dev` — reproducible install from `package-lock.json`.
   `--include=dev` forces the build toolchain (Vite, Tailwind, `@vitejs/plugin-react`)
   to install even if `NODE_ENV=production` is set in the Render dashboard.
-- `npm run build` — runs `node scripts/generate-sitemap.mjs` (regenerates
-  `sitemap.xml` + `robots.txt` from `src/data/`) and then `vite build`,
-  which outputs the static site to `dist/`.
+- `npm run build` — runs `scripts/generate-sitemap.mjs` (regenerates
+  `sitemap.xml` + `robots.txt`) and `scripts/generate-head.mjs` (regenerates
+  `index.html` from `index.template.html` using the canonical URL, title and
+  meta description in `src/data/personal.js`), then `vite build` → `dist/`.
 
 > The build needs Node `^20.19 || >=22.12` (Vite 8). `package.json` declares
 > `"engines": { "node": ">=22.12.0" }` and Render should pick it up, but set
 > `NODE_VERSION=22.14.0` explicitly to be safe — Render's default runtime can be older.
+
+### ⚠️ Two dashboard settings Render does NOT read from the repo
+
+Render configures redirects/rewrites and response headers **in the dashboard**, not from
+files in the repo. A Blueprint only applies them when you sync it. If you created the
+site from the dashboard, set these by hand:
+
+**1. SPA routing** — Dashboard → your site → **Settings → Redirects and Rewrites** → add:
+
+| Field        | Value          |
+| ------------ | -------------- |
+| Source       | `/*`           |
+| Action       | **Rewrite**    |
+| Destination  | `/index.html`  |
+
+Without this, `/projects/solex` returns **404** on a hard refresh, a shared link or a
+crawler visit (client-side navigation still works). Render only applies a rule when no
+file exists at the requested path, so real assets are never shadowed.
+
+**2. Cache headers** — Dashboard → your site → **Settings → Headers**:
+
+| Path           | Name          | Value                                     |
+| -------------- | ------------- | ----------------------------------------- |
+| `/`            | Cache-Control | `no-cache, no-store, must-revalidate`      |
+| `/index.html`  | Cache-Control | `no-cache, no-store, must-revalidate`      |
+| `/assets/*`    | Cache-Control | `public, max-age=31536000, immutable`      |
+| `/images/*`    | Cache-Control | `public, max-age=31536000, immutable`      |
+| `/fonts/*`     | Cache-Control | `public, max-age=31536000, immutable`      |
+
+This matters: Render's CDN caches the HTML for up to 5 minutes by default. Right after a
+deploy, a visitor can be served the **previous** `index.html`, which references hashed
+asset filenames that no longer exist → the JS 404s → **blank page**. `no-cache` on the
+HTML removes that window entirely.
+
+Both blocks are also in `render.yaml` — running `render blueprint launch` (or pressing
+**Apply** on the Blueprint) applies them for you.
 
 ### Environment variables
 
@@ -234,16 +272,23 @@ Leave it unset and the form behaves as designed: the visitor's message is
 formatted and handed to WhatsApp (`wa.me`), Gmail (`mail.google.com`), their
 mail client, or the clipboard.
 
-### SPA routing
+### Changing the domain
 
-Client-side routes such as `/projects/solex` must fall back to `index.html`.
-This repo ships **both** mechanisms:
+`src/data/personal.js` → `siteUrl` is the single source of truth. It drives the
+canonical URL, the Open Graph/Twitter tags, `sitemap.xml` and `robots.txt`.
+Change it to your custom domain once Render attaches one — no other file to edit.
 
-- `public/_redirects` — `/*  /index.html  200` (honoured by Render, Netlify, Cloudflare Pages).
-- `render.yaml` — an explicit `rewrite` route for every path to `/index.html`.
+`index.html` is regenerated from `index.template.html` on every `npm run dev` / `npm run build`
+by `scripts/generate-head.mjs`, using the canonical URL, title and meta description in
+`src/data/personal.js`. Edit the **template** for markup changes and `personal.js` for
+content changes — the generated `index.html` is committed but always overwritten by the
+build, so it can never go stale.
 
-If you deploy somewhere else, add the equivalent rewrite
-(Vercel: `vercel.json` rewrites; Nginx: `try_files $uri /index.html`).
+### SPA routing on other hosts
+
+`public/_redirects` ships `/*  /index.html  200` for Netlify / Cloudflare Pages.
+Render ignores that file (use the dashboard rule above). For Vercel use a
+`vercel.json` rewrite; for Nginx use `try_files $uri /index.html`.
 
 ### Other static hosts
 

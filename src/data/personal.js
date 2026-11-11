@@ -29,7 +29,9 @@ export const personal = {
   resumeUrl: '/Full_Stack_Developer_Resume.pdf',
   metaDescription:
     'Pradyumn Dwivedi is a full-stack developer from Kanpur, India, building production-ready web applications with the MERN and PERN stacks using React.js, Node.js, Express.js, MongoDB and PostgreSQL.',
-  siteUrl: 'https://pradyumndwivedi.dev/',
+  // Change this to your custom domain once it is attached — the canonical
+  // URL, Open Graph tags, sitemap.xml and robots.txt are all generated from it.
+  siteUrl: 'https://portfolio-website-vd98.onrender.com',
 }
 
 export const summary =
