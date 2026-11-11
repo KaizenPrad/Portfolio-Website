@@ -1,0 +1,212 @@
+@import "./styles/fonts.css";
+@import "tailwindcss";
+
+@theme {
+  /* --- surfaces --- */
+  --color-ink-950: #0b0b0b;
+  --color-ink-900: #120c0a;
+  --color-ink-800: #1c100d;
+  --color-ink-700: #2a1710;
+  --color-ink-600: #32160f;
+  --color-ink-500: #4a2114;
+
+  /* --- accent --- */
+  --color-flame-500: #ff6a00;
+  --color-flame-600: #d94b13;
+  --color-flame-700: #a5380c;
+
+  /* --- text --- */
+  --color-mist-100: #ffffff;
+  --color-mist-300: #e7ddd8;
+  --color-mist-400: #b8aaa4;
+  --color-mist-500: #8d7e79;
+
+  /* --- fonts --- */
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --radius-4xl: 2rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-ink-800);
+    color: var(--color-mist-100);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-flame-500);
+    color: var(--color-ink-950);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-flame-500);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Firefox / WebKit scrollbar polish */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #120c0a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #4a2114;
+    border-radius: 99px;
+    border: 2px solid #120c0a;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #d94b13;
+  }
+}
+
+@layer components {
+  /* Warm atmospheric glow used behind the hero / section dividers */
+  .atmosphere {
+    background:
+      radial-gradient(60% 55% at 18% 8%, rgba(255, 106, 0, 0.28) 0%, rgba(255, 106, 0, 0) 70%),
+      radial-gradient(45% 50% at 88% 18%, rgba(217, 75, 19, 0.22) 0%, rgba(217, 75, 19, 0) 72%),
+      radial-gradient(70% 60% at 50% 100%, rgba(74, 33, 20, 0.55) 0%, rgba(28, 16, 13, 0) 75%);
+  }
+
+  /* Very subtle film grain over the dark surfaces */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.22;
+    mix-blend-mode: overlay;
+    background-repeat: repeat;
+    background-size: 96px 96px;
+    background-image: url("/images/noise.png");
+  }
+
+  .hairline {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .shell {
+    width: 100%;
+    max-width: 84rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 2rem;
+    }
+  }
+
+  .section {
+    padding-block: 5rem;
+  }
+
+  @media (min-width: 768px) {
+    .section {
+      padding-block: 7.5rem;
+    }
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  /* Tilted card border glow on hover */
+  .lift {
+    transition:
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.5s ease;
+  }
+  .lift:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255, 106, 0, 0.35);
+  }
+
+  /* Hero portrait — transform-only so the image is painted immediately
+     (animating opacity would delay the Largest Contentful Paint element). */
+  .hero-portrait {
+    animation: hero-in 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .hero-float {
+    animation: hero-float 9s ease-in-out infinite;
+  }
+}
+
+@keyframes hero-in {
+  from {
+    transform: translateY(22px) scale(0.96);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-11px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-portrait,
+  .hero-float {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

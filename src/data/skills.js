@@ -1,0 +1,120 @@
+/**
+ * Technical skills — grouped by discipline, taken from the résumé.
+ * `level: 'core'` = actively used in shipped projects
+ * `level: 'learning'` = currently exploring
+ */
+export const skillGroups = [
+  {
+    id: 'languages',
+    title: 'Programming Languages',
+    caption: 'The syntax layer',
+    icon: 'Braces',
+    items: [
+      { name: 'JavaScript', level: 'core' },
+      { name: 'Java', level: 'core' },
+      { name: 'SQL', level: 'core' },
+      { name: 'Python', level: 'core' },
+    ],
+  },
+  {
+    id: 'frontend',
+    title: 'Frontend Development',
+    caption: 'Interface & interaction',
+    icon: 'LayoutTemplate',
+    items: [
+      { name: 'HTML5', level: 'core' },
+      { name: 'CSS3', level: 'core' },
+      { name: 'React.js', level: 'core' },
+      { name: 'Tailwind CSS', level: 'core' },
+      { name: 'Vite', level: 'core' },
+      { name: 'React Router', level: 'core' },
+      { name: 'Framer Motion', level: 'core' },
+      { name: 'Responsive Web Design', level: 'core' },
+    ],
+  },
+  {
+    id: 'backend',
+    title: 'Backend Development',
+    caption: 'APIs, auth & realtime',
+    icon: 'Server',
+    items: [
+      { name: 'Node.js', level: 'core' },
+      { name: 'Express.js', level: 'core' },
+      { name: 'RESTful APIs', level: 'core' },
+      { name: 'Authentication', level: 'core' },
+      { name: 'JWT Authentication', level: 'core' },
+      { name: 'Socket.io', level: 'core' },
+      { name: 'API Integration', level: 'core' },
+    ],
+  },
+  {
+    id: 'databases',
+    title: 'Databases',
+    caption: 'Where the truth lives',
+    icon: 'Database',
+    items: [
+      { name: 'MongoDB', level: 'core' },
+      { name: 'PostgreSQL', level: 'core' },
+      { name: 'MySQL', level: 'core' },
+      { name: 'Supabase', level: 'core' },
+      { name: 'Neon', level: 'core' },
+      { name: 'Database Design', level: 'core' },
+    ],
+  },
+  {
+    id: 'fullstack',
+    title: 'Full Stack',
+    caption: 'End-to-end capability',
+    icon: 'Layers',
+    items: [
+      { name: 'MERN Stack', level: 'core' },
+      { name: 'PERN Stack', level: 'core' },
+      { name: 'CRUD Operations', level: 'core' },
+      { name: 'Payment Integration', level: 'core' },
+      { name: 'Razorpay', level: 'core' },
+    ],
+  },
+  {
+    id: 'tools',
+    title: 'Tools & Platforms',
+    caption: 'Ship and operate',
+    icon: 'Wrench',
+    items: [
+      { name: 'Git', level: 'core' },
+      { name: 'GitHub', level: 'core' },
+      { name: 'Postman', level: 'core' },
+      { name: 'Figma', level: 'core' },
+      { name: 'Cloudinary', level: 'core' },
+      { name: 'Vercel', level: 'core' },
+      { name: 'Render', level: 'core' },
+      { name: 'Hostinger', level: 'core' },
+      { name: 'Docker', level: 'learning' },
+    ],
+  },
+  {
+    id: 'concepts',
+    title: 'Core Concepts',
+    caption: 'Computer-science foundations',
+    icon: 'BookOpen',
+    items: [
+      { name: 'Data Structures & Algorithms', level: 'core' },
+      { name: 'Object-Oriented Programming', level: 'core' },
+      { name: 'DBMS', level: 'core' },
+      { name: 'Operating Systems', level: 'core' },
+      { name: 'Computer Networks', level: 'core' },
+    ],
+  },
+  {
+    id: 'exploring',
+    title: 'Currently Exploring',
+    caption: 'Next things to learn',
+    icon: 'Compass',
+    items: [
+      { name: 'System Design', level: 'learning' },
+      { name: 'Redis', level: 'learning' },
+      { name: 'Docker', level: 'learning' },
+      { name: 'Kubernetes', level: 'learning' },
+      { name: 'AI Engineering', level: 'learning' },
+    ],
+  },
+]
