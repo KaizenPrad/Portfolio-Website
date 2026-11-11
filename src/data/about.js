@@ -1,4 +1,4 @@
-import { summary } from './personal'
+import { summary } from './personal.js'
 
 export const about = {
   heading: 'More Than Just Writing Code.',

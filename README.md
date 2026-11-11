@@ -46,6 +46,7 @@ src/
       BrandIcons.jsx GitHub / LinkedIn / WhatsApp marks (lucide v1 dropped brand icons)
   data/
     personal.js      Name, contact, socials, nav links, résumé, contact-form config
+    env.js           Build-time env vars (VITE_*)
     projects.js      All seven projects + their case studies
     skills.js        Skill groups and proficiency levels
     experience.js    Timeline, education and certification
@@ -58,6 +59,7 @@ src/
   utils/images.js    Responsive srcset helpers
   App.jsx, main.jsx, index.css
 scripts/             Asset pipeline + QA helpers (see below)
+render.yaml          Render Blueprint (Static Site) — build command + env vars
 public/
   images/            Portrait cut-out, project screenshots (webp), OG image, noise tile
   fonts/             Self-hosted woff2 variable fonts
@@ -135,9 +137,6 @@ npm run assets:profile   # AI background removal + cleanup for the portrait
 npm run assets:og        # regenerate the Open Graph image
 npm run assets:noise     # regenerate the grain tile
 npm run assets:fonts     # re-download the self-hosted fonts
-
-node scripts/lighthouse.mjs http://localhost:4173            # simulated slow-4G
-node scripts/lighthouse.mjs http://localhost:4173 provided   # unthrottled
 ```
 
 `npm run assets:profile` expects the original photo at `public/images/profile-source.jpg`.
@@ -145,6 +144,24 @@ It runs an on-device segmentation model (`@imgly/background-removal-node`, no AP
 upload) and then `scripts/finalize-profile.mjs`, which drops stray background fragments,
 keeps only the subject, fills interior holes, trims to the subject's bounding box and
 exports `profile.webp` (776 px) + `profile-480.webp` for the responsive `srcset`.
+
+That model ships a ~50 MB ONNX runtime, so it is **not** a project dependency — the
+Render build stays lean. Install it only when you need to re-cut the portrait:
+
+```bash
+npm i -D @imgly/background-removal-node
+npm run assets:profile
+```
+
+Likewise, `lighthouse` is not a dependency (it downloads a full Chrome). Install it
+only to re-run the audit:
+
+```bash
+npm i -D lighthouse
+npm run preview
+node scripts/lighthouse.mjs http://localhost:4173            # simulated slow-4G
+node scripts/lighthouse.mjs http://localhost:4173 provided   # unthrottled
+```
 
 ---
 
@@ -168,12 +185,70 @@ under Lighthouse's simulated slow-4G profile.
 
 ## Deployment
 
-Any static host works. For SPA routing add a rewrite of all unknown paths to
-`/index.html` — a `_redirects` file (Netlify) is already included. For Vercel
-use a `vercel.json` rewrite, and for GitHub Pages a 404 fallback.
+### Render (Static Site)
+
+Create a **Static Site** on Render and point it at this repo:
+
+| Setting            | Value                                |
+| ------------------ | ------------------------------------ |
+| Build Command      | `npm ci --include=dev && npm run build` |
+| Publish Path       | `./dist`                             |
+| Environment        | `NODE_VERSION` = `22.14.0` (see below) |
+
+Or use the included Blueprint — `render.yaml` already encodes all of the above:
 
 ```bash
-npm run build   # -> dist/
+render blueprint launch      # then pick this repo
+```
+
+**Build command breakdown**
+
+- `npm ci --include=dev` — reproducible install from `package-lock.json`.
+  `--include=dev` forces the build toolchain (Vite, Tailwind, `@vitejs/plugin-react`)
+  to install even if `NODE_ENV=production` is set in the Render dashboard.
+- `npm run build` — runs `node scripts/generate-sitemap.mjs` (regenerates
+  `sitemap.xml` + `robots.txt` from `src/data/`) and then `vite build`,
+  which outputs the static site to `dist/`.
+
+> The build needs Node `^20.19 || >=22.12` (Vite 8). `package.json` declares
+> `"engines": { "node": ">=22.12.0" }` and Render should pick it up, but set
+> `NODE_VERSION=22.14.0` explicitly to be safe — Render's default runtime can be older.
+
+### Environment variables
+
+**None are required** — the site is fully static and builds with zero configuration.
+
+| Variable                  | Required | Purpose                                                                 |
+| ------------------------- | -------- | ----------------------------------------------------------------------- |
+| `NODE_VERSION`            | optional | Pin the Node runtime for the build (`22.14.0` recommended)               |
+| `VITE_CONTACT_ENDPOINT`   | optional | A hosted form endpoint (Formspree / Basin / Web3Forms). When set, the contact form POSTs straight to your inbox instead of handing the message to WhatsApp/Gmail. **Public endpoint only — never an API secret.** |
+
+Anything prefixed with `VITE_` is inlined into the bundle at build time, so it
+must be set as a Render environment variable **before** the build runs (Render
+rebuilds automatically when env vars change). To use it:
+
+1. Add `VITE_CONTACT_ENDPOINT` in the Render dashboard → *Environment*.
+2. Trigger a rebuild — the value is baked into `dist/assets/*.js`.
+
+Leave it unset and the form behaves as designed: the visitor's message is
+formatted and handed to WhatsApp (`wa.me`), Gmail (`mail.google.com`), their
+mail client, or the clipboard.
+
+### SPA routing
+
+Client-side routes such as `/projects/solex` must fall back to `index.html`.
+This repo ships **both** mechanisms:
+
+- `public/_redirects` — `/*  /index.html  200` (honoured by Render, Netlify, Cloudflare Pages).
+- `render.yaml` — an explicit `rewrite` route for every path to `/index.html`.
+
+If you deploy somewhere else, add the equivalent rewrite
+(Vercel: `vercel.json` rewrites; Nginx: `try_files $uri /index.html`).
+
+### Other static hosts
+
+```bash
+npm ci --include=dev && npm run build   # -> dist/
 ```
 
 ---

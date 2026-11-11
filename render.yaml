@@ -1,0 +1,30 @@
+# Render Blueprint — Static Site
+#
+# Render dashboard equivalent:
+#   Type .............. Static Site
+#   Build Command ..... npm ci --include=dev && npm run build
+#   Publish Path ...... ./dist
+#
+# Deploy with:  render blueprint launch   (or connect the repo in the dashboard)
+
+services:
+  - type: web
+    name: pradyumn-dwivedi-portfolio
+    runtime: static
+    buildCommand: npm ci --include=dev && npm run build
+    staticPublishPath: ./dist
+    autoDeploy: true
+    envVars:
+      # Vite 8 requires Node ^20.19 || >=22.12 — pin it so the build never
+      # falls back to Render's older default runtime.
+      - key: NODE_VERSION
+        value: 22.14.0
+      # Optional: a hosted form endpoint (Formspree / Basin / Web3Forms).
+      # Leave unset and the contact form hands the message to WhatsApp/Gmail.
+      # - key: VITE_CONTACT_ENDPOINT
+      #   sync: false
+    routes:
+      # SPA fallback — every unknown path is served by the client router.
+      - type: rewrite
+        source: /*
+        destination: /index.html

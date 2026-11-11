@@ -1,4 +1,4 @@
-import { certifications } from './personal'
+import { certifications } from './personal.js'
 
 /**
  * Timeline — taken directly from the résumé.

@@ -3,6 +3,8 @@
  * Edit values here — every component reads from this file.
  */
 
+import { VITE_CONTACT_ENDPOINT } from './env.js'
+
 export const personal = {
   name: 'Pradyumn Dwivedi',
   firstName: 'Pradyumn',
@@ -89,7 +91,7 @@ export const certifications = [
  *     (compose link), so nothing is ever stored on this site.
  */
 export const contactForm = {
-  endpoint: '',
+  endpoint: VITE_CONTACT_ENDPOINT,
   recipient: personal.email,
   whatsapp: personal.whatsappRaw,
   siteName: 'Pradyumn Dwivedi — Portfolio',
